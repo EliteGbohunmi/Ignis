@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Project Ignis — Volunteer Application</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --fire: #FF4D00;
+    --ember: #FF8C42;
+    --gold: #FFD166;
+    --dark: #0A0A0A;
+    --surface: #111111;
+    --card: #181818;
+    --border: #2a2a2a;
+    --text: #F0EDE8;
+    --muted: #888;
+    --radius: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--fire), var(--gold));
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 64px 24px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--fire), var(--ember));
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 7vw, 64px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #fff 30%, var(--gold) 70%, var(--fire) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .hero-sub strong { color: var(--ember); }
+
+  .read-warning {
+    display: inline-block;
+    margin-top: 24px;
+    background: #0f0a08;
+    border: 1px solid #2a1a0a;
+    border-left: 3px solid var(--fire);
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: left;
+    max-width: 500px;
+    width: 100%;
+  }
+
+  .read-warning strong {
+    color: var(--ember);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Christ-centric banner */
+  .christ-banner {
+    max-width: 720px;
+    margin: 28px auto 0;
+    padding: 0 24px;
+  }
+
+  .christ-card {
+    background: linear-gradient(135deg, #0d0b04, #100d05);
+    border: 1px solid rgba(255, 209, 102, 0.2);
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .christ-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+
+  .christ-text strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .christ-text p { font-size: 13px; color: #9a8050; line-height: 1.65; }
+
+  .form-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 24px 80px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 48px 0 12px;
+  }
+
+  .section-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--fire), var(--ember));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .section-desc { color: var(--muted); font-size: 14px; margin-bottom: 24px; margin-left: 46px; }
+
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .q-label { display: block; font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+  .req { color: var(--fire); margin-left: 4px; }
+  .q-hint { display: block; font-size: 13px; color: var(--muted); margin-bottom: 12px; font-style: italic; }
+
+  input[type="text"], input[type="email"], input[type="tel"], textarea {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 14px;
+    outline: none;
+    font-family: inherit;
+    font-size: 15px;
+  }
+
+  textarea { min-height: 120px; resize: vertical; }
+  input:focus, textarea:focus { border-color: var(--fire); }
+
+  .options-group { display: flex; flex-direction: column; gap: 10px; }
+  .opt-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: #0a0a0a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+  }
+  .opt-label:hover { border-color: var(--ember); }
+
+  /* Validation styles */
+  .q-card.invalid { border-color: var(--fire); box-shadow: 0 0 10px rgba(255,77,0,0.1); }
+  .error-msg { color: var(--fire); font-size: 12px; margin-top: 10px; display: none; font-weight: 500; }
+  .q-card.invalid .error-msg { display: block; }
+
+  .submit-area { text-align: center; margin-top: 60px; padding-bottom: 40px; }
+  .submit-btn {
+    background: linear-gradient(135deg, var(--fire), var(--ember));
+    color: #fff;
+    padding: 18px 60px;
+    border: none;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(255,77,0,0.3);
+    transition: 0.3s;
+  }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1a0a00;
+    border: 1px solid var(--fire);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 100px;
+    z-index: 9999;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  .success-screen {
+    display: none;
+    position: fixed;
+    inset: 0; background: var(--dark);
+    z-index: 2000; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; padding: 20px;
+  }
+  .success-screen.show { display: flex; }
+
+  .form-footer { text-align: center; padding: 40px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+  
+  
+
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="hero">
+  <div class="badge">🔥 Applications Open — Project Ignis</div>
+  <h1>Project Ignis<br/>Volunteer Application</h1>
+  <p class="hero-sub">
+    We're assembling a <strong>tight, purpose-driven team</strong> — not a large crowd.
+    Every question here is intentional. <strong>Evidence matters more than enthusiasm.</strong>
+  </p>
+  <div class="read-warning">
+    <strong>⚠ Read Before You Begin</strong>
+    Vague, copy-paste, or surface-level answers will disqualify you automatically. We read every word. Take your time — be honest, be specific.
+  </div>
+</div>
+
+<!-- CHRIST-CENTRIC BANNER -->
+<div class="christ-banner">
+  <div class="christ-card">
+    <div class="christ-icon">✝️</div>
+    <div class="christ-text">
+      <strong>Christ-Centric Foundation</strong>
+      <p>Project Ignis is built on a Christ-centred foundation. Our values of purpose, integrity, service, and growth are rooted in faith. You don't need to share our beliefs to apply — but you must respect them. We build with love, lead with humility, and work as unto God.</p>
+    </div>
+  </div>
+</div>
+
+
+<div class="form-wrap">
+  <form id="ignisForm">
+    
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">Personal Information</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Full Name <span class="req">*</span></label>
+      <input type="text" name="full_name" placeholder="Your full name"/>
+      <div class="error-msg">Please enter your full name.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Email Address <span class="req">*</span></label>
+      <input type="email" name="email" placeholder="you@example.com"/>
+      <div class="error-msg">Please enter a valid email address.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">WhatsApp / Phone Number <span class="req">*</span></label>
+      <input type="tel" name="phone" placeholder="+234 000 0000 000"/>
+      <div class="error-msg">Please enter your phone number.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Location — City & State / Country <span class="req">*</span></label>
+      <input type="text" name="location" placeholder="e.g. Lagos, Nigeria"/>
+      <div class="error-msg">Please enter your location.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Age Range <span class="req">*</span></label>
+      <div class="options-group">
+        <label class="opt-label"><input type="radio" name="age_range" value="15-20"/><span>15 – 20</span></label>
+        <label class="opt-label"><input type="radio" name="age_range" value="21-25"/><span>21 – 25</span></label>
+        <label class="opt-label"><input type="radio" name="age_range" value="26-30"/><span>26 – 30</span></label>
+        <label class="opt-label"><input type="radio" name="age_range" value="31+"/><span>31 and above</span></label>
+      </div>
+      <div class="error-msg">Please select your age range.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Gender <span class="req">*</span></label>
+      <div class="options-group">
+        <label class="opt-label"><input type="radio" name="gender" value="Male"/><span>Male</span></label>
+        <label class="opt-label"><input type="radio" name="gender" value="Female"/><span>Female</span></label>
+        <label class="opt-label"><input type="radio" name="gender" value="Prefer not to say"/><span>Prefer not to say</span></label>
+      </div>
+      <div class="error-msg">Please select your gender.</div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">Mindset & Motivation</div>
+    </div>
+    <p class="section-desc">We want to understand who you are beyond your resume. Be real.</p>
+    <div class="q-card" data-required>
+      <label class="q-label">What drew you to Project Ignis — and why now? <span class="req">*</span></label>
+      <span class="q-hint">Don't give a generic answer. Tell us what actually pulled you in.</span>
+      <textarea name="motivation" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">What values matter most to you when building or working with others? <span class="req">*</span></label>
+      <textarea name="values" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">How do you define leadership — in your own words? <span class="req">*</span></label>
+      <textarea name="leadership_def" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Are you disciplined, resilient, and hungry to grow? Give us a real-life example that proves it. <span class="req">*</span></label>
+      <span class="q-hint">Be specific. Vague answers won't cut it.</span>
+      <textarea name="resilience_example" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Have you ever volunteered or worked with a community, project, or brand before? Tell us about it. <span class="req">*</span></label>
+      <span class="q-hint">If not, tell us about a time you showed initiative.</span>
+      <textarea name="past_experience" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">Strengths & Skills</div>
+    </div>
+    <p class="section-desc">Describe how you'll fit into Project Ignis and what you'll bring to it.</p>
+    <div class="q-card" data-required>
+      <label class="q-label">What are your top strengths? <span class="req">*</span></label>
+      <textarea name="strengths" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">What is one area you're actively working on improving? <span class="req">*</span></label>
+      <textarea name="weakness" placeholder="Be honest — growth starts with awareness."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">What specific skills do you have that could directly contribute to Project Ignis? <span class="req">*</span></label>
+      <span class="q-hint">e.g. content creation, graphic design, writing, community management, etc.</span>
+      <textarea name="skills" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">Vision & Commitment</div>
+    </div>
+    <p class="section-desc">How serious and consistent are you willing to be?</p>
+    <div class="q-card" data-required>
+      <label class="q-label">How many hours per week can you realistically commit to volunteering? <span class="req">*</span></label>
+      <div class="options-group">
+        <label class="opt-label"><input type="radio" name="hours" value="1-3hrs"/><span>1 – 3 hours</span></label>
+        <label class="opt-label"><input type="radio" name="hours" value="3-5hrs"/><span>3 – 5 hours</span></label>
+        <label class="opt-label"><input type="radio" name="hours" value="5+hrs"/><span>5+ hours</span></label>
+      </div>
+      <div class="error-msg">Please select an option.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">In which area or role do you believe you'd perform most efficiently within Project Ignis? <span class="req">*</span></label>
+      <textarea name="role_fit" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Are you confident you can meet deadlines and stay consistent? Explain. <span class="req">*</span></label>
+      <textarea name="consistency" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card">
+      <label class="q-label">Anything else you'd like us to know?</label>
+      <textarea name="extra" placeholder="Optional..."></textarea>
+    </div>
+
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">Leadership & Long-Term Alignment</div>
+    </div>
+    <p class="section-desc">We're not just building a team — we're building people.</p>
+    <div class="q-card" data-required>
+      <label class="q-label">Leadership growth and personal goals? <span class="req">*</span></label>
+      <textarea name="leadership_growth" placeholder="Your answer here..."></textarea>
+      <div class="error-msg">Please answer this question.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Open to training and mentorship? <span class="req">*</span></label>
+      <div class="options-group">
+        <label class="opt-label"><input type="radio" name="mentorship" value="Absolutely"/><span>Absolutely 🔥</span></label>
+        <label class="opt-label"><input type="radio" name="mentorship" value="Maybe"/><span>Yes, but need more info</span></label>
+      </div>
+      <div class="error-msg">Please select an option.</div>
+    </div>
+    <div class="q-card" data-required>
+      <label class="q-label">Join WhatsApp & Weekly Syncs? <span class="req">*</span></label>
+      <div class="options-group">
+        <label class="opt-label"><input type="radio" name="whatsapp" value="Yes"/><span>YESS 💯</span></label>
+        <label class="opt-label"><input type="radio" name="whatsapp" value="No"/><span>No</span></label>
+      </div>
+      <div class="error-msg">Please select an option.</div>
+    </div>
+
+    <div class="submit-area">
+      <button type="submit" class="submit-btn">🔥 Submit My Application</button>
+      <p style="color: var(--muted); font-size: 12px; margin-top: 16px;">By submitting, you agree to be contacted via email or WhatsApp.</p>
+    </div>
+  </form>
+</div>
+
+<div class="toast" id="toastBanner">⚠ Please fill <span id="toastCount">0</span> missing field(s)</div>
+
+<div class="success-screen" id="successScreen">
+  <h2 style="font-family: 'Playfair Display'; font-size: 3rem; color: var(--gold);">Ignited. 🔥</h2>
+  <p style="margin-top: 20px; color: var(--muted);">Thank you for applying. We'll reach out soon.</p>
+</div>
+
+<div class="form-footer">
+  <p>© 2025 Project Ignis. Built with purpose. 🔥</p>
+</div>
+
+<script>
+const form = document.getElementById("ignisForm");
+const toast = document.getElementById("toastBanner");
+const toastCount = document.getElementById("toastCount");
+const progressBar = document.getElementById("progressBar");
+
+function validate(card) {
+  const field = card.querySelector('input:not([type="radio"]), textarea, select');
+  const radios = card.querySelectorAll('input[type="radio"]');
+  let isValid = true;
+
+  if (radios.length) {
+    isValid = [...radios].some(r => r.checked);
+  } else if (field) {
+    const val = field.value.trim();
+    if (field.type === "email") {
+      isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    } else if (field.type === "tel") {
+      isValid = val.length >= 7; 
+    } else {
+      isValid = val !== "";
+    }
+  }
+
+  card.classList.toggle("invalid", !isValid);
+  return isValid;
+}
+
+function updateProgress() {
+  const cards = document.querySelectorAll(".q-card[data-required]");
+  const completed = [...cards].filter(c => {
+    const field = c.querySelector('input:not([type="radio"]), textarea, select');
+    const radios = c.querySelectorAll('input[type="radio"]');
+    if(radios.length) return [...radios].some(r => r.checked);
+    return field && field.value.trim() !== "";
+  }).length;
+  progressBar.style.width = (completed / cards.length) * 100 + "%";
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const cards = document.querySelectorAll(".q-card[data-required]");
+  const invalidCards = [...cards].filter(c => !validate(c));
+
+  if (invalidCards.length) {
+    toastCount.innerText = invalidCards.length;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 4000);
+    invalidCards[0].scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+
+  const btn = form.querySelector(".submit-btn");
+  btn.disabled = true;
+  btn.innerText = "Igniting... 🔥";
+
+  try {
+    const res = await fetch("https://formspree.io/f/mqegzjwz", {
+      method: "POST",
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (res.ok) {
+      document.getElementById("successScreen").classList.add("show");
+      window.scrollTo(0, 0);
+    } else throw new Error();
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerText = "🔥 Submit My Application";
+    alert("Submission failed. Check your connection.");
+  }
+});
+
+form.addEventListener("input", e => {
+  const card = e.target.closest(".q-card");
+  if (card) card.classList.remove("invalid");
+  updateProgress();
+});
+</script>
+</body>
+</html>
